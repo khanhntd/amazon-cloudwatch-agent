@@ -1,0 +1,59 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT
+
+on:
+  push:
+    branches:
+      - release/*
+
+    paths-ignore:
+      - '.github/**'
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'the version number to release'
+        required: true
+
+jobs:
+  release-checking:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.checking_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check version
+        id: checking_version
+        run: |
+          version_in_release=`cat $PACKAGING_ROOT/VERSION`
+
+          if [ $version_in_release != ${{ github.event.inputs.version }} ]; then
+            echo "::error::Wrong version is detected: $version_in_release != ${{ github.event.inputs.version }}"
+            exit 1
+          fi
+
+          echo "::set-output name=version::$version_in_release"
+
+  release-github-draft-notes:
+    runs-on: ubuntu-latest
+    needs: [ release-checking ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Generate release-note
+        run: sh tools/release/note/generate-release-note.sh
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ needs.release-checking.outputs.version }}
+          commitish: ${{ github.event.inputs.sha }}
+          release_name: Release ${{ needs.release-checking.outputs.version }}
+          body_path: release-note
+          draft: true
+          prerelease: true
+
