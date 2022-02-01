@@ -23,14 +23,6 @@ variable "region" {
   default = "us-west-2"
 }
 
-variable "aws_access_key" {
-  type = string
-}
-
-variable "aws_secret_access_key" {
-  type = string
-}
-
 variable "ami" {
   type = string
   default = ""
@@ -53,7 +45,7 @@ variable "github_sha" {
 
 variable "github_repo" {
   type = string
-  default = ""
+  default = "https://github.com/aws/amazon-cloudwatch-agent.git"
 }
 
 variable "package" {

@@ -33,6 +33,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.TERRAFORM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TERRAFORM_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
       - name: Echo OS
         run: echo run on ec2 instance os ${{ matrix.arrays.os }}
 
@@ -47,9 +54,6 @@ jobs:
           echo run terraform and execute test code &&
           terraform apply --auto-approve
           -var="ssh_key=${PRIVATE_KEY}"
-          -var="aws_access_key=${TERRAFORM_AWS_ACCESS_KEY_ID}"
-          -var="aws_secret_access_key=${TERRAFORM_AWS_SECRET_ACCESS_KEY}"
-          -var="github_repo=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
           -var="github_sha=${GITHUB_SHA}"
           -var="package=${{ matrix.arrays.package }}"
           -var="install_agent=${{ matrix.arrays.installAgentCommand }}"
@@ -60,8 +64,4 @@ jobs:
 
       - name: Terraform destroy
         if: always()
-        run: >
-          terraform destroy --auto-approve
-          -var="aws_access_key=${TERRAFORM_AWS_ACCESS_KEY_ID}"
-          -var="aws_secret_access_key=${TERRAFORM_AWS_SECRET_ACCESS_KEY}"
-          -var="ami=${{ matrix.arrays.ami }}"
+        run: terraform destroy --auto-approve -var="ami=${{ matrix.arrays.ami }}"
