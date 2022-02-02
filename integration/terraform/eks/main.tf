@@ -10,6 +10,14 @@ terraform {
  }
 }
 
+# get eks cluster by name
+data "aws_eks_cluster" "testing_cluster" {
+  name = var.eks_cluster_name
+}
+data "aws_eks_cluster_auth" "testing_cluster" {
+  name = var.eks_cluster_name
+}
+
 # set up kubectl
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.testing_cluster.endpoint
@@ -25,4 +33,11 @@ provider "kubectl" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.testing_cluster.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.testing_cluster.token
   load_config_file       = false
+}
+
+# create a unique namespace for each run
+resource "kubernetes_namespace" "aoc_ns" {
+  metadata {
+    name = "aoc-ns-${module.common.testing_id}"
+  }
 }
