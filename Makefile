@@ -16,6 +16,7 @@ ifndef CWAGENT_BUILD_MODE
 CWAGENT_BUILD_MODE=default
 endif
 
+
 BUILD := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS = -s -w
 LDFLAGS +=  -X github.com/aws/amazon-cloudwatch-agent/cfg/agentinfo.VersionStr=${VERSION}
