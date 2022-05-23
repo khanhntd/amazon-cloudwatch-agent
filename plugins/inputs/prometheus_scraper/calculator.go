@@ -12,12 +12,12 @@ type Calculator struct {
 	deltaCalculator *DeltaCalculator
 }
 
-func appendValidValue(pmb PrometheusMetricBatch, pm *PrometheusMetric) PrometheusMetricBatch {
+func isPrometheusMetricValidValue(pm *PrometheusMetric) bool {
 	if !pm.isValueValid() {
 		log.Printf("D! Drop metric with NaN or Inf value: %v", pm)
-		return pmb
+		return true
 	}
-	return append(pmb, pm)
+	return false
 }
 
 // Do calculation based on metric type
@@ -27,13 +27,13 @@ func (c *Calculator) Calculate(pmb PrometheusMetricBatch) (result PrometheusMetr
 	var summaries PrometheusMetricBatch
 
 	for _, pm := range pmb {
-		if pm.isGauge() {
-			gauges = appendValidValue(gauges, pm)
+		if pm.isGauge() && isPrometheusMetricValidValue(pm){
+			gauges = append(gauges, pm)
 		} else if pm.isCounter() {
 			if calculatedMetric := c.deltaCalculator.calculate(pm); calculatedMetric != nil {
 				counters = append(counters, calculatedMetric)
 			}
-		} else if pm.isSummary() {
+		} else if pm.isSummary() && isPrometheusMetricValidValue(pm){
 			// calculate the delta for <basename>_count and <basename>_sum metrics as well
 			if strings.HasSuffix(pm.metricName, histogramSummaryCountSuffix) ||
 				strings.HasSuffix(pm.metricName, histogramSummarySumSuffix) {
@@ -41,7 +41,7 @@ func (c *Calculator) Calculate(pmb PrometheusMetricBatch) (result PrometheusMetr
 					summaries = append(summaries, calculatedMetric)
 				}
 			} else {
-				summaries = appendValidValue(summaries, pm)
+				summaries = append(summaries, pm)
 			}
 		}
 	}
