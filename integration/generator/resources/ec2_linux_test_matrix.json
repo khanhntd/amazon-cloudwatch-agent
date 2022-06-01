@@ -100,7 +100,7 @@
   },
   {
     "os": "debian",
-    "username": "ec2-user",
+    "username": "ubuntu",
     "installAgentCommand": "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
     "ami": "cloudwatch-agent-integration-test-ubuntu*",
     "caCertPath": "/etc/ssl/certs/ca-certificates.crt",
