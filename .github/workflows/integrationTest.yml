@@ -106,7 +106,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'true'
-          ref: '33631b0569b1dff51dcff8036d2169fab71c6aa1'
+          ref: '4fab0fdaef478d70e45728875f1493d6fca34850'
 
       - name: Cache go
         id: cached_go
@@ -361,7 +361,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'true'
-          ref: '33631b0569b1dff51dcff8036d2169fab71c6aa1'
+          ref: '4fab0fdaef478d70e45728875f1493d6fca34850'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
