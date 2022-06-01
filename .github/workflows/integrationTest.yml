@@ -358,7 +358,10 @@ jobs:
       local_stack_host_name: ${{ steps.localstack.outputs.local_stack_host_name }}
     steps:
       - uses: actions/checkout@v2
-        ref: '20ad0e2a183eb20f527eedd71a077a8dab10715e'
+        with:
+          fetch-depth: 0
+          submodules: 'true'
+          ref: '20ad0e2a183eb20f527eedd71a077a8dab10715e'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
