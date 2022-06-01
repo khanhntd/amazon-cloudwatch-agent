@@ -29,7 +29,7 @@ locals {
 resource "aws_instance" "integration-test" {
   ami                    = data.aws_ami.latest.id
   instance_type          = var.ec2_instance_type
-  key_name               = var.key_name
+  key_name               = local.ssh_key_name
   iam_instance_profile   = aws_iam_instance_profile.cwagent_instance_profile.name
   vpc_security_group_ids = [aws_security_group.ec2_security_group.id]
   provisioner "remote-exec" {
@@ -52,7 +52,7 @@ resource "aws_instance" "integration-test" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = var.ssh_key
+      private_key = local.private_key_content
       host        = self.public_dns
     }
   }
