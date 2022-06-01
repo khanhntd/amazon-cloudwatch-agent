@@ -42,7 +42,7 @@ resource "aws_instance" "integration-test" {
       "git clone ${var.github_repo}",
       "cd amazon-cloudwatch-agent",
       "git reset --hard ${var.github_sha}",
-      "aws s3 cp s3://${var.s3_bucket}/${var.binary_name} .",
+      "aws s3 cp s3://${var.s3_bucket}/integration-test/binary/${var.github_sha}/linux/${var.arc}/${var.binary_name} .",
       "sudo ${var.install_agent}",
       "echo get ssl pem for localstack and export local stack host name",
       "cd ~/amazon-cloudwatch-agent/integration/localstack/ls_tmp",
