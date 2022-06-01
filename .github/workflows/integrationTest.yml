@@ -106,7 +106,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'true'
-          ref: '1b74becb8f2a542430e1cb6f77ad307383869500'
+          ref: 'c95b3d9225a4bc543244344630940a21d59fe6de'
 
       - name: Cache go
         id: cached_go
@@ -148,7 +148,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'true'
-          ref: '1b74becb8f2a542430e1cb6f77ad307383869500'
+          ref: 'c95b3d9225a4bc543244344630940a21d59fe6de'
       #TODO upgrade to 1.17 after @ZhenyuTan-amz updates our go build version
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -364,7 +364,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'true'
-          ref: '1b74becb8f2a542430e1cb6f77ad307383869500'
+          ref: 'c95b3d9225a4bc543244344630940a21d59fe6de'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
