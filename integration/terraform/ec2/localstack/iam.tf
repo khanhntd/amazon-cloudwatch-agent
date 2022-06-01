@@ -27,24 +27,7 @@ EOF
 data "aws_iam_policy_document" "user-managed-policy-document" {
   statement {
     actions = [
-      "cloudwatch:GetMetricData",
-      "cloudwatch:PutMetricData",
-      "cloudwatch:ListMetrics",
-      "ec2:DescribeVolumes",
-      "ec2:DescribeTags",
-      "logs:PutLogEvents",
-      "logs:DescribeLogStreams",
-      "logs:DescribeLogGroups",
-      "logs:CreateLogStream",
-      "logs:CreateLogGroup",
-      "logs:DeleteLogGroup",
-      "logs:DeleteLogStream",
-      "logs:PutRetentionPolicy",
-      "logs:GetLogEvents",
-      "logs:PutLogEvents",
-      "s3:GetObjectAcl",
-      "s3:GetObject",
-      "s3:ListBucket"
+      "s3:*"
     ]
     resources = ["*"]
   }
