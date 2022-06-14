@@ -363,7 +363,7 @@ Function CWAConfig() {
     if ($ConfigLocation -eq $AllConfig) {
         Remove-Item -Path "${JSON_DIR}\*" -Force -ErrorAction SilentlyContinue
     } else {
-        & cmd /c "`"$CWAProgramFiles\config-downloader.exe`" --output-dir ${JSON_DIR} --download-source ${ConfigLocation} --mode ${param_mode} --config ${COMMON_CONIG} --multi-config ${multi_config} 2>&1"
+        & cmd /c "`"$CWAProgramFiles\config-downloader.exe`" --output-dir `"${JSON_DIR}`" --download-source `"${ConfigLocation}`" --mode ${param_mode} --config `"${COMMON_CONIG}`" --multi-config ${multi_config} 2>&1"
         CheckCMDResult # Exit immediately if config-downloader outputs any error
     }
 
@@ -374,13 +374,13 @@ Function CWAConfig() {
         Remove-Item "${TOML}" -Force -ErrorAction SilentlyContinue
     } else {
         Write-Output "Start configuration validation..."
-        & cmd /c "`"$CWAProgramFiles\config-translator.exe`" --input ${JSON} --input-dir ${JSON_DIR} --output ${TOML} --mode ${param_mode} --config ${COMMON_CONIG} --multi-config ${multi_config} 2>&1"
+        & cmd /c "`"$CWAProgramFiles\config-translator.exe`" --input `"${JSON}`" --input-dir `"${JSON_DIR}`" --output `"${TOML}`" --mode ${param_mode} --config `"${COMMON_CONIG}`" --multi-config ${multi_config} 2>&1"
         CheckCMDResult  # Exit immediately if config-translator outputs any error
 
         # Set ErrorActionPreference as Continue to continue on error when schema-test on toml file fails and
         # return a UX-friendly message
         $ErrorActionPreference = "Continue"
-        & cmd /c "`"${CWAProgramFiles}\amazon-cloudwatch-agent.exe`" --schematest --config ${TOML} 2>&1" | Out-File $CVLogFile
+        & cmd /c "`"${CWAProgramFiles}\amazon-cloudwatch-agent.exe`" --schematest --config `"${TOML}`" 2>&1" | Out-File $CVLogFile
         if ($LASTEXITCODE -ne 0) {
             Write-Output "Configuration validation second phase failed"
             Write-Output "======== Error Log ========"
@@ -451,7 +451,7 @@ Function CWOCConfig() {
         Copy-Item "${PREDEFINED_CONFIG_DATA}" -Destination "${YAML_DIR}/default.tmp"
         Write-Output "Successfully fetched the config and saved in ${YAML_DIR}\default.tmp"
     } else {
-        & cmd /c "`"$CWAProgramFiles\config-downloader.exe`" --output-dir ${YAML_DIR} --download-source ${OtelConfigLocation} --mode ${param_mode} --config ${COMMON_CONIG} --multi-config ${multi_config} 2>&1"
+        & cmd /c "`"$CWAProgramFiles\config-downloader.exe`" --output-dir `"${YAML_DIR}`" --download-source `"${OtelConfigLocation}`" --mode ${param_mode} --config `"${COMMON_CONIG}`" --multi-config ${multi_config} 2>&1"
         # Use return instead of exit since CWAgent and ADOT Collector should be two independent agents as much as possible
         if ($LASTEXITCODE -ne 0) {
            return

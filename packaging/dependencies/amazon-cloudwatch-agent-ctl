@@ -335,7 +335,7 @@ cwa_config() {
      if [ "${cwa_config_location}" = "${ALL_CONFIG}" ]; then
           rm -rf "${JSON_DIR}"/*
      else
-          runDownloaderCommand="${CMDDIR}/config-downloader --output-dir ${JSON_DIR} --download-source ${cwa_config_location} --mode ${param_mode} --config ${COMMON_CONIG} --multi-config ${multi_config}"
+          runDownloaderCommand="${CMDDIR}/config-downloader --output-dir \"${JSON_DIR}\" --download-source \"${cwa_config_location}\" --mode ${param_mode} --config ${COMMON_CONIG} --multi-config ${multi_config}"
           echo "${runDownloaderCommand}"
           ${runDownloaderCommand} || return
      fi
