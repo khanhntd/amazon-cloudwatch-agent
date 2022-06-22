@@ -7,8 +7,6 @@
 package metrics_multiple_namespace
 
 import (
-	"flag"
-	"fmt"
 	"log"
 	"testing"
 	"time"
@@ -17,6 +15,7 @@ import (
 
 const (
 	RetryTime        = 15
+	AgentRuntime 	 = 2 * time.Minute
 	ConfigJSON       = "/config.json"
 	ConfigOutputPath = "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
 )
@@ -45,15 +44,18 @@ func TestNumberMetricDimension(t *testing.T) {
 	for _, parameter := range parameters {
 		t.Run(parameter.testName, func(t *testing.T) {
 			test.CopyFile(parameter.resourcePath+ConfigJSON, ConfigOutputPath)
-			err := test.StartAgent(configOutputPath, false)
 
-			time.Sleep(agentRuntime)
-			log.Printf("Agent has been running for : %s", agentRuntime.String())
+			err := test.StartAgent(configOutputPath, true)
+			if err != nil {
+				t.Errorf("Error starting agent %v", err)
+			}
+
+			time.Sleep(AgentRuntime)
+			log.Printf("Agent has been running for : %s", AgentRuntime.String())
 			test.StopAgent()
 
 			// test for cloud watch metrics
 			cxt := context.Background()
-			dimensionFilter := buildDimensionFilterList(parameter.numberDimensionsInCW)
 			client := test.GetCWClient(cxt)
 			
 			for index, _ := range parameter.namespace {
