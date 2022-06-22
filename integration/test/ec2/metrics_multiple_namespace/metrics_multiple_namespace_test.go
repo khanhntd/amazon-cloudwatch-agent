@@ -9,10 +9,10 @@ package metrics_multiple_namespace
 import (
 	"flag"
 	"fmt"
-	"github.com/aws/amazon-cloudwatch-agent/integration/test"
 	"log"
 	"testing"
 	"time"
+	"github.com/aws/amazon-cloudwatch-agent/integration/test"
 )
 
 const (
@@ -20,8 +20,6 @@ const (
 	ConfigJSON       = "/config.json"
 	ConfigOutputPath = "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
 )
-
-var clusterName = flag.String("clusterName", "", "Please provide the os preference, valid value: windows/linux.")
 
 func TestNumberMetricDimension(t *testing.T) {
 	parameters := []struct {
