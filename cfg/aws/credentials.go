@@ -60,8 +60,7 @@ var credentialsChain = make([]RootCredentialsProvider, 0)
 
 func getRootCredentialsFromChain(c *CredentialConfig) *credentials.Credentials {
 	for _, provider := range credentialsChain {
-		credentials := provider.Credentials(c)
-		if credentials != nil {
+		if credentials:= provider.Credentials(c); credentials!= nil {
 			return credentials
 		}
 	}
