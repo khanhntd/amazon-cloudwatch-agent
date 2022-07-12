@@ -9,7 +9,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"syscall"cd
+	"syscall"
+
 	"github.com/aws/amazon-cloudwatch-agent/translator/config"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -61,7 +62,7 @@ func translateConfig() error {
 				log.Printf("I! Return exit error: exit code=%d\n", status.ExitStatus())
 
 				if status.ExitStatus() == config.ERR_CODE_NOJSONFILE {
-					log.Printf("I! No json config files found, please provide config, exit now\n")
+					log.Printf("I! there is no json configuration when running translator\n")
 					os.Exit(0)
 				}
 			}
