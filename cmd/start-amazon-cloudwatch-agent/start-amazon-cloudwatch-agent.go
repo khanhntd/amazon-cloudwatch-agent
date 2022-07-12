@@ -9,8 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"syscall"
-	"net/http"
+	"syscall"cd
 	"github.com/aws/amazon-cloudwatch-agent/translator/config"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -94,15 +93,6 @@ func main() {
 	}
 	log.Printf("I! Config has been translated into TOML %s \n", tomlConfigPath)
 	printFileContents(tomlConfigPath)
-
-	go func() {
-			pprofHostPort := "http://localhost:6060/debug/pprof"
-			log.Printf("I! Starting pprof HTTP server at: %s",pprofHostPort)
-
-			if err := http.ListenAndServe(":6060", nil); err != nil {
-				log.Fatal("E! " + err.Error())
-			}
-	}()
 
 	if err := startAgent(writer); err != nil {
 		log.Printf("E! Error when starting Agent, Error is %v \n", err)

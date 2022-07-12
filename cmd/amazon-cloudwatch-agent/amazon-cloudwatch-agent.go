@@ -51,7 +51,7 @@ const (
 
 var fDebug = flag.Bool("debug", false,
 	"turn on debug logging")
-var pprofAddr = flag.String("pprof-addr", "",
+var pprofAddr = flag.String("pprof-addr", ":6060",
 	"pprof address to listen on, not activate pprof if empty")
 var fQuiet = flag.Bool("quiet", false,
 	"run in quiet mode")
