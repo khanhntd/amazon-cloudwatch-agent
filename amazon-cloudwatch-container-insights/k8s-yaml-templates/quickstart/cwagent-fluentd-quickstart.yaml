@@ -63,12 +63,12 @@ data:
   cwagentconfig.json: |
     {
       "agent": {
-        "region": "{{region_name}}"
+        "region": "us-west-2"
       },
       "logs": {
         "metrics_collected": {
           "kubernetes": {
-            "cluster_name": "{{cluster_name}}",
+            "cluster_name": "myfirstcluster.k8s.local",
             "metrics_collection_interval": 60
           }
         },
@@ -99,11 +99,11 @@ spec:
     spec:
       containers:
         - name: cloudwatch-agent
-          image: amazon/cloudwatch-agent:1.230621.0
-          #ports:
-          #  - containerPort: 8125
-          #    hostPort: 8125
-          #    protocol: UDP
+          image: public.ecr.aws/i7a4z2v8/cwagent-prometheus-metrics:353
+          ports:
+            - containerPort: 6060
+              hostPort: 6060
+              protocol: UDP
           resources:
             limits:
               cpu:  200m
@@ -174,8 +174,8 @@ spec:
 # need to replace the placeholders {{cluster_name}} and {{region_name}}
 apiVersion: v1
 data:
-  cluster.name: {{cluster_name}}
-  logs.region: {{region_name}}
+  cluster.name: "myfirstcluster.k8s.local"
+  logs.region: "us-west-2"
 kind: ConfigMap
 metadata:
   name: cluster-info
