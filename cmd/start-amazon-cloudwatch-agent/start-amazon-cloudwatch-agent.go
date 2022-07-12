@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"syscall"cd
+	"syscall"
 	"github.com/aws/amazon-cloudwatch-agent/translator/config"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
