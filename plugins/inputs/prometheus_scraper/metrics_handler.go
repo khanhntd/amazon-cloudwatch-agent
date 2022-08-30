@@ -44,17 +44,21 @@ func (mh *metricsHandler) start(shutDownChan chan interface{}, wg *sync.WaitGrou
 
 func (mh *metricsHandler) handle(pmb PrometheusMetricBatch) {
 	// Add metric type info
+	log.Printf("D! Before handling: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
 	pmb = mh.mtHandler.Handle(pmb)
 
+	log.Printf("D! Before filter: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
 	// Filter out Histogram and untyped Metrics and adding logging
 	pmb = mh.filter.Filter(pmb)
 
+	log.Printf("D! Before calculate: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
 	// do calculation: calculate delta for counter
 	pmb = mh.calculator.Calculate(pmb)
 
+	log.Printf("D! Before merge: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
 	// do merge: merge metrics which are sharing same tags
 	metricMaterials := mergeMetrics(pmb)
-
+	log.Printf("D! After merge: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
 	// set emf
 	mh.setEmfMetadata(metricMaterials)
 
