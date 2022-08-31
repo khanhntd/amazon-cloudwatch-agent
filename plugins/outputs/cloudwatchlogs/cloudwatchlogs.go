@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"log"
 
 	"github.com/aws/amazon-cloudwatch-agent/cfg/agentinfo"
 	configaws "github.com/aws/amazon-cloudwatch-agent/cfg/aws"
@@ -283,6 +284,7 @@ func (cd *cwDest) Publish(events []logs.LogEvent) error {
 	for _, e := range events {
 		if !cd.isEMF {
 			msg := e.Message()
+			log.Printf("Message before submitted: %v\n", msg)
 			if strings.HasPrefix(msg, "{") && strings.HasSuffix(msg, "}") && strings.Contains(msg, "\"CloudWatchMetrics\"") {
 				cd.switchToEMF()
 			}

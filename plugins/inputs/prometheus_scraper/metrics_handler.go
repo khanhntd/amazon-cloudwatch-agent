@@ -44,21 +44,37 @@ func (mh *metricsHandler) start(shutDownChan chan interface{}, wg *sync.WaitGrou
 
 func (mh *metricsHandler) handle(pmb PrometheusMetricBatch) {
 	// Add metric type info
-	log.Printf("D! Before handling: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
+	log.Printf("D! Before handling: number of metrics %v with prometheus metrics:%v \n", len(pmb))
+	for _, pm := range pmb {
+		log.Printf("D! Metrics:%v \n", &pm)
+	}
+	
 	pmb = mh.mtHandler.Handle(pmb)
 
-	log.Printf("D! Before filter: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
+	log.Printf("D! Before filter: number of metrics %v with prometheus metrics:%v \n", len(pmb))
+	for _, pm := range pmb {
+		log.Printf("D! Metrics:%v \n", &pm)
+	}
 	// Filter out Histogram and untyped Metrics and adding logging
 	pmb = mh.filter.Filter(pmb)
 
-	log.Printf("D! Before calculate: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
+	log.Printf("D! Before canculate: number of metrics %v with prometheus metrics:%v \n", len(pmb))
+	for _, pm := range pmb {
+		log.Printf("D! Metrics:%v \n", &pm)
+	}
 	// do calculation: calculate delta for counter
 	pmb = mh.calculator.Calculate(pmb)
 
-	log.Printf("D! Before merge: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
+	log.Printf("D! Before merging: number of metrics %v with prometheus metrics:%v \n", len(pmb))
+	for _, pm := range pmb {
+		log.Printf("D! Metrics:%v \n", &pm)
+	}
 	// do merge: merge metrics which are sharing same tags
 	metricMaterials := mergeMetrics(pmb)
-	log.Printf("D! After merge: number of metrics %v with prometheus metrics:%v \n", len(pmb), pmb)
+	log.Printf("D! After merging: number of metrics %v with prometheus metrics:%v \n", len(pmb))
+	for _, mt := range metricMaterials {
+		log.Printf("D! Metrics:%v \n", &mt)
+	}
 	// set emf
 	mh.setEmfMetadata(metricMaterials)
 
