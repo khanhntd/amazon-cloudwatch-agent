@@ -103,7 +103,7 @@ jobs:
         uses: docker/build-push-action@v2
         if: steps.cached_binaries.outputs.cache-hit != 'true'
         with:
-          file: amazon-cloudwatch-container-insights/cloudwatch-agent-dockerfile/localdeb/Dockerfile
+          file: amazon-cloudwatch-container-insights/cloudwatch-agent-dockerfile/source/Dockerfile
           context: .
           push: true
           tags: |
