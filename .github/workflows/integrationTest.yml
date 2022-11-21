@@ -156,13 +156,6 @@ jobs:
           role-to-assume: ${{ env.TERRAFORM_AWS_ASSUME_ROLE }}
           aws-region: us-west-2
 
-      - name: Cache win zip
-        id: cached_win_zip
-        uses: actions/cache@v2
-        with:
-          key: "cached_win_zip_${{ github.sha }}"
-          path: go.mod
-
       - name: Copy binary
         if: steps.cached_win_zip.outputs.cache-hit != 'true'
         run: |
