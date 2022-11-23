@@ -7,13 +7,9 @@ env:
   TERRAFORM_AWS_ASSUME_ROLE: ${{ secrets.TERRAFORM_AWS_ASSUME_ROLE }}
   S3_INTEGRATION_BUCKET: ${{ secrets.S3_INTEGRATION_BUCKET }}
   KEY_NAME: ${{ secrets.KEY_NAME }}
-  GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-  PASSPHRASE: ${{ secrets.PASSPHRASE }}
-  GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
-  GPG_TTY: $(tty)
   ECR_INTEGRATION_TEST_REPO: "cwagent-integration-test"
-  CWA_GITHUB_TEST_REPO_NAME: "aws/amazon-cloudwatch-agent-test"
-  CWA_GITHUB_TEST_REPO_URL: "https://github.com/aws/amazon-cloudwatch-agent-test.git"
+  CWA_GITHUB_TEST_REPO_NAME: "khanhntd/amazon-cloudwatch-agent-test"
+  CWA_GITHUB_TEST_REPO_URL: "https://github.com/khanhntd/amazon-cloudwatch-agent-test.git"
 
 on:
   push:
@@ -68,9 +64,18 @@ jobs:
           key: "cached_binaries_${{ github.sha }}"
           path: go.mod
 
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
       - name: Build Binaries
         if: steps.cached_binaries.outputs.cache-hit != 'true'
         run: make build package-rpm package-deb package-win package-darwin
+
+      - name: Sign Build Files
+        run: for f in $(find build/bin/); do if [ ! -d $f ]; then echo "Signing file $f" && gpg --detach-sign $f ; fi ; done
 
 
       - name: Upload to s3
@@ -275,7 +280,6 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-gpg@v3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -299,11 +303,14 @@ jobs:
           aws s3 cp s3://${S3_INTEGRATION_BUCKET}/integration-test/packaging/${{ github.sha }}/amd64/amazon-cloudwatch-agent.pkg ./packages/amd64/amazon-cloudwatch-agent.pkg
           aws s3 cp s3://${S3_INTEGRATION_BUCKET}/integration-test/packaging/${{ github.sha }}/arm64/amazon-cloudwatch-agent.pkg ./packages/arm64/amazon-cloudwatch-agent.pkg
 
-      - name: Sign packages
-        if: steps.cached_sig.outputs.cache-hit != 'true'
-        run: |
-          echo "${GPG_PRIVATE_KEY}" | gpg --batch --import -
-          for f in $(find packages/); do if [ ! -d $f ]; then echo "Signing file $f" && echo "${PASSPHRASE}" | gpg --detach-sign  --passphrase-fd 0 --batch --default-key "${GPG_KEY_NAME}" $f ; fi ; done
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
+      - name: Sign Build Files
+        run: for f in $(find packages/); do if [ ! -d $f ]; then echo "Signing file $f" && gpg --detach-sign $f ; fi ; done
 
       - name: Upload to s3
         if: steps.cached_sig.outputs.cache-hit != 'true'
@@ -510,6 +517,7 @@ jobs:
               -var="ami=${{ matrix.arrays.ami }}" \
               -var="ca_cert_path=${{ matrix.arrays.caCertPath }}" \
               -var="arc=${{ matrix.arrays.arc }}" \
+              -var="cwa_test_github_sha=b0739ff19f3b73626ba34627156b8b8587a4ace1"\
               -var="binary_name=${{ matrix.arrays.binaryName }}" \
               -var="local_stack_host_name=${{ needs.StartLocalStack.outputs.local_stack_host_name }}" \
               -var="s3_bucket=${S3_INTEGRATION_BUCKET}" \
