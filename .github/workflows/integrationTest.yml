@@ -517,7 +517,7 @@ jobs:
               -var="ami=${{ matrix.arrays.ami }}" \
               -var="ca_cert_path=${{ matrix.arrays.caCertPath }}" \
               -var="arc=${{ matrix.arrays.arc }}" \
-              -var="cwa_test_github_sha=924c3809e0dc97c91ad6497c8bf1a923ce54e9b6"\
+              -var="cwa_test_github_sha=674d87eec2b32f54a029a75d67a636cb31826fc7"\
               -var="binary_name=${{ matrix.arrays.binaryName }}" \
               -var="local_stack_host_name=${{ needs.StartLocalStack.outputs.local_stack_host_name }}" \
               -var="s3_bucket=${S3_INTEGRATION_BUCKET}" \
