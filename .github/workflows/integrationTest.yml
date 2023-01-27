@@ -724,7 +724,7 @@ jobs:
           timeout_minutes: 15
           retry_wait_seconds: 5
           command: |
-            cd terraform/ecs_ec2/daemon
+            cd terraform/ecs/linux/ec2_launch/daemon
             terraform init
             if terraform apply --auto-approve\
               -var="test_dir=${{ matrix.arrays.test_dir }}"\
@@ -793,7 +793,7 @@ jobs:
           timeout_minutes: 15
           retry_wait_seconds: 5
           command: |
-            cd terraform/ecs_fargate/linux
+            cd terraform/ecs/linux
             terraform init
             if terraform apply --auto-approve\
               -var="test_dir=${{ matrix.arrays.test_dir }}"\
@@ -863,7 +863,7 @@ jobs:
           timeout_minutes: 30
           retry_wait_seconds: 5
           command: |
-            cd terraform/ec2/performance
+            cd terraform/performance
             terraform init
             if terraform apply --auto-approve \
               -var="ssh_key_value=${PRIVATE_KEY}" -var="github_test_repo=${{env.CWA_GITHUB_TEST_REPO_URL}}" \
@@ -877,6 +877,7 @@ jobs:
               -var="s3_bucket=${S3_INTEGRATION_BUCKET}" \
               -var="ssh_key_name=${KEY_NAME}" \
               -var="test_name=${{ matrix.arrays.os }}" \
+              -var="performance_number_of_logs=${{ matrix.arrays.performance_number_of_logs}}"\
               -var="test_dir=${{ matrix.arrays.test_dir }}" ; then terraform destroy -auto-approve
             else
               terraform destroy -auto-approve && exit 1
