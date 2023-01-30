@@ -451,7 +451,6 @@ jobs:
           command: |
             cd terraform/ec2/linux
             terraform init
-            if terraform apply --auto-approve \
               -var="ssh_key_value=${PRIVATE_KEY}" -var="github_test_repo=${{env.CWA_GITHUB_TEST_REPO_URL}}" \
               -var="github_test_repo_branch=${{env.CWA_GITHUB_TEST_REPO_BRANCH}}" \
               -var="cwa_github_sha=${GITHUB_SHA}" -var="install_agent=${{ matrix.arrays.installAgentCommand }}" \
@@ -466,10 +465,7 @@ jobs:
               -var="s3_bucket=${S3_INTEGRATION_BUCKET}" \
               -var="ssh_key_name=${KEY_NAME}" \
               -var="test_name=cw-integ-test-${{ matrix.arrays.os }}" \
-              -var="test_dir=${{ matrix.arrays.test_dir }}" ; then terraform destroy -auto-approve
-            else
-              terraform destroy -auto-approve && exit 1
-            fi
+              -var="test_dir=${{ matrix.arrays.test_dir }}" 
 
       - name: Terraform apply
         if: ${{ matrix.arrays.family == 'window' && steps.ec2-nvidia-integration-test.outputs.cache-hit != 'true' }}
