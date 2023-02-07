@@ -49,9 +49,12 @@ cp ${PREPKGPATH}/com.amazon.cloudwatch.agent.plist ${BUILD_ROOT}/Library/LaunchD
 
 echo "Setting permissions as required by launchd"
 chmod 600 ${BUILD_ROOT}/Library/LaunchDaemons/*
-chmod ug+rx ${BUILD_ROOT}${MACHINE_ROOT}bin/amazon-cloudwatch-agent
-chmod ug+rx ${BUILD_ROOT}${MACHINE_ROOT}bin/amazon-cloudwatch-agent-ctl
-chmod ug+rx ${BUILD_ROOT}${MACHINE_ROOT}bin/start-amazon-cloudwatch-agent
+chmod 550 ${BUILD_ROOT}${MACHINE_ROOT}bin/amazon-cloudwatch-agent
+chmod 550 ${BUILD_ROOT}${MACHINE_ROOT}bin/config-downloader
+chmod 550 ${BUILD_ROOT}${MACHINE_ROOT}bin/config-translator
+chmod 550 ${BUILD_ROOT}${MACHINE_ROOT}bin/amazon-cloudwatch-agent-ctl
+chmod 550 ${BUILD_ROOT}${MACHINE_ROOT}bin/start-amazon-cloudwatch-agent
+
 
 echo "Creating tar"
 (

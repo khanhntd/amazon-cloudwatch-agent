@@ -32,7 +32,7 @@ RUN apt-get update &&  \
     rm -rf /var/lib/apt/lists/*
 COPY --from=builder /go/src/github.com/aws/amazon-cloudwatch-agent/build/bin/linux_${TARGETARCH}/ /opt/aws/amazon-cloudwatch-agent/bin
 
-FROM scratch
+FROM ubuntu:latest
 
 COPY --from=cert /tmp /tmp
 COPY --from=cert /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt

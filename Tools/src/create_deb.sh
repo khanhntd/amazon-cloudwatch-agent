@@ -55,9 +55,11 @@ cp ${BUILD_SPACE}/packaging/debian/preinst ${BUILD_ROOT}/
 cp ${BUILD_SPACE}/packaging/debian/prerm ${BUILD_ROOT}/
 cp ${BUILD_SPACE}/packaging/debian/debian-binary ${BUILD_ROOT}/
 
-chmod ug+rx ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
-chmod ug+rx ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
-chmod ug+rx ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent
+chmod 550 ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+chmod 550 ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/bin/config-downloader
+chmod 550 ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/bin/config-translator
+chmod 550 ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
+chmod 550 ${BUILD_ROOT}/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent
 
 echo "Constructing the control file"
 echo 'Package: amazon-cloudwatch-agent' >${BUILD_ROOT}/control
