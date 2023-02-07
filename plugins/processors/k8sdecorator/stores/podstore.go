@@ -218,10 +218,13 @@ func (p *PodStore) refreshInternal(now time.Time, podList []corev1.Pod) {
 			log.Printf("W! podKey is unavailable refresh pod store for pod %s", pod.Name)
 			continue
 		}
+		log.Printf("Pod name %v with pod state %v and condition %v within the namespace %v", pod.Name, pod.Status.Phase, pod.Status.Conditions, pod.Namespace)
 		tmpCpuReq, _ := getResourceSettingForPod(&pod, p.nodeInfo.getCPUCapacity(), cpuKey, getRequestForContainer)
 		cpuRequest += tmpCpuReq
+		log.Printf("The CPU request for the pod %v is %v and total so far is %v and node cpu capacity %v", pod.Name, tmpCpuReq, cpuRequest, p.nodeInfo.getCPUCapacity())
 		tmpMemReq, _ := getResourceSettingForPod(&pod, p.nodeInfo.getMemCapacity(), memoryKey, getRequestForContainer)
 		memRequest += tmpMemReq
+		log.Printf("The Mem request for the pod %v is %v and total so far is %v and node mem capacity %v", pod.Name, tmpMemReq, memRequest, p.nodeInfo.getMemCapacity())
 		if pod.Status.Phase == corev1.PodRunning {
 			podCount += 1
 		}
