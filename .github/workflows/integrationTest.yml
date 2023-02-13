@@ -8,20 +8,14 @@ env:
   S3_INTEGRATION_BUCKET: ${{ secrets.S3_INTEGRATION_BUCKET }}
   KEY_NAME: ${{ secrets.KEY_NAME }}
   ECR_INTEGRATION_TEST_REPO: "cwagent-integration-test"
-  CWA_GITHUB_TEST_REPO_NAME: "khanhntd/amazon-cloudwatch-agent-test"
-  CWA_GITHUB_TEST_REPO_URL: "https://github.com/khanhntd/amazon-cloudwatch-agent-test.git"
-  CWA_GITHUB_TEST_REPO_BRANCH: "ethtool"
+  CWA_GITHUB_TEST_REPO_NAME: "aws/amazon-cloudwatch-agent-test"
+  CWA_GITHUB_TEST_REPO_URL: "https://github.com/aws/amazon-cloudwatch-agent-test.git"
+  CWA_GITHUB_TEST_REPO_BRANCH: "main"
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**/*.md'
-      - 'NOTICE'
-      - 'RELEASE_NOTES'
-      - 'THIRD-PARTY'
-      - 'LICENSE'
   workflow_dispatch:
 
 concurrency:
@@ -544,7 +538,7 @@ jobs:
           command: |
             cd terraform/ec2/linux
             terraform init
-            terraform apply --auto-approve \
+            if terraform apply --auto-approve \
               -var="ssh_key_value=${PRIVATE_KEY}" -var="github_test_repo=${{env.CWA_GITHUB_TEST_REPO_URL}}" \
               -var="cwa_github_sha=${GITHUB_SHA}" -var="install_agent=${{ matrix.arrays.installAgentCommand }}" \
               -var="github_test_repo_branch=${{env.CWA_GITHUB_TEST_REPO_BRANCH}}" \
@@ -558,7 +552,19 @@ jobs:
               -var="s3_bucket=${S3_INTEGRATION_BUCKET}" \
               -var="ssh_key_name=${KEY_NAME}" \
               -var="test_name=${{ matrix.arrays.os }}" \
-              -var="test_dir=${{ matrix.arrays.test_dir }}" 
+              -var="test_dir=${{ matrix.arrays.test_dir }}" ; then terraform destroy -auto-approve
+            else
+              terraform destroy -auto-approve && exit 1
+            fi
+      #This is here just in case workflow cancel
+      - name: Terraform destroy
+        if: ${{ cancelled() && steps.ec2-linux-integration-test.outputs.cache-hit != 'true' }}
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          timeout_minutes: 8
+          retry_wait_seconds: 5
+          command: cd terraform/ec2/linux && terraform destroy --auto-approve
 
 #  @TODO add back when we add back windows tests
 #  EC2WinIntegrationTest:
@@ -702,7 +708,7 @@ jobs:
           timeout_minutes: 15
           retry_wait_seconds: 5
           command: |
-            cd terraform/ecs_ec2/daemon
+            cd terraform/ecs/linux/ec2_launch/daemon
             terraform init
             if terraform apply --auto-approve\
               -var="test_dir=${{ matrix.arrays.test_dir }}"\
@@ -770,7 +776,7 @@ jobs:
           timeout_minutes: 15
           retry_wait_seconds: 5
           command: |
-            cd terraform/ecs_fargate/linux
+            cd terraform/ecs/linux
             terraform init
             if terraform apply --auto-approve\
               -var="test_dir=${{ matrix.arrays.test_dir }}"\
