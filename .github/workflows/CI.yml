@@ -808,6 +808,23 @@ jobs:
           retry_wait_seconds: 5
           command: cd terraform/ecs/linux && terraform destroy --auto-approve
 
+  StressTest:
+    name: "StressTest"
+    needs: [StartLocalStack, EC2LinuxIntegrationTest]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arrays: ${{ fromJson(needs.GenerateTestMatrix.outputs.ec2_stress_matrix) }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{env.CWA_GITHUB_TEST_REPO_NAME}}
+
+
 #  PerformanceTrackingTest:
 #    name: "PerformanceTrackingTest"
 #    needs: [MakeBinary, StartLocalStack, GenerateTestMatrix]
