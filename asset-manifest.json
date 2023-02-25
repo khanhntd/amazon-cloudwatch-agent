@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.js": "/amazon-cloudwatch-agent/static/js/main.3f6580f8.js",
+    "static/js/651.8591f7fb.chunk.js": "/amazon-cloudwatch-agent/static/js/651.8591f7fb.chunk.js",
+    "static/js/16.a3c8fb3c.chunk.js": "/amazon-cloudwatch-agent/static/js/16.a3c8fb3c.chunk.js",
+    "static/css/105.b5e28d91.chunk.css": "/amazon-cloudwatch-agent/static/css/105.b5e28d91.chunk.css",
+    "static/js/105.4df65087.chunk.js": "/amazon-cloudwatch-agent/static/js/105.4df65087.chunk.js",
+    "static/js/240.c17d0c88.chunk.js": "/amazon-cloudwatch-agent/static/js/240.c17d0c88.chunk.js",
+    "static/js/879.becb1af3.chunk.js": "/amazon-cloudwatch-agent/static/js/879.becb1af3.chunk.js",
+    "static/js/870.26f62923.chunk.js": "/amazon-cloudwatch-agent/static/js/870.26f62923.chunk.js",
+    "static/js/260.1df7c7fe.chunk.js": "/amazon-cloudwatch-agent/static/js/260.1df7c7fe.chunk.js",
+    "index.html": "/amazon-cloudwatch-agent/index.html",
+    "main.3f6580f8.js.map": "/amazon-cloudwatch-agent/static/js/main.3f6580f8.js.map",
+    "651.8591f7fb.chunk.js.map": "/amazon-cloudwatch-agent/static/js/651.8591f7fb.chunk.js.map",
+    "16.a3c8fb3c.chunk.js.map": "/amazon-cloudwatch-agent/static/js/16.a3c8fb3c.chunk.js.map",
+    "105.b5e28d91.chunk.css.map": "/amazon-cloudwatch-agent/static/css/105.b5e28d91.chunk.css.map",
+    "105.4df65087.chunk.js.map": "/amazon-cloudwatch-agent/static/js/105.4df65087.chunk.js.map",
+    "240.c17d0c88.chunk.js.map": "/amazon-cloudwatch-agent/static/js/240.c17d0c88.chunk.js.map",
+    "879.becb1af3.chunk.js.map": "/amazon-cloudwatch-agent/static/js/879.becb1af3.chunk.js.map",
+    "870.26f62923.chunk.js.map": "/amazon-cloudwatch-agent/static/js/870.26f62923.chunk.js.map",
+    "260.1df7c7fe.chunk.js.map": "/amazon-cloudwatch-agent/static/js/260.1df7c7fe.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.3f6580f8.js"
+  ]
+}
