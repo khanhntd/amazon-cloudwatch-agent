@@ -9,16 +9,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
-	"github.com/aws/amazon-cloudwatch-agent/internal"
-	"github.com/aws/amazon-cloudwatch-agent/internal/publisher"
-	"github.com/aws/amazon-cloudwatch-agent/metric/distribution"
-	"github.com/aws/amazon-cloudwatch-agent/metric/distribution/regular"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
+	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/metric"
 	"github.com/influxdata/telegraf/testutil"
@@ -26,7 +21,63 @@ import (
 	"github.com/influxdata/toml/ast"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+
+	"github.com/aws/amazon-cloudwatch-agent/internal"
+	"github.com/aws/amazon-cloudwatch-agent/internal/publisher"
+	"github.com/aws/amazon-cloudwatch-agent/metric/distribution"
+	"github.com/aws/amazon-cloudwatch-agent/metric/distribution/regular"
 )
+
+type mockCloudWatchLogs struct {
+	logStreamName   string
+	pushedLogEvents []cloudwatchlogs.InputLogEvent
+}
+
+func (c *mockCloudWatchLogs) Init(lsName string) {
+	c.logStreamName = lsName
+	c.pushedLogEvents = make([]cloudwatchlogs.InputLogEvent, 0)
+}
+
+func (c *mockCloudWatchLogs) DescribeLogGroups(*cloudwatchlogs.DescribeLogGroupsInput) (*cloudwatchlogs.DescribeLogGroupsOutput, error) {
+	return nil, nil
+}
+
+func (c *mockCloudWatchLogs) DescribeLogStreams(*cloudwatchlogs.DescribeLogStreamsInput) (*cloudwatchlogs.DescribeLogStreamsOutput, error) {
+	arn := "arn"
+	creationTime := time.Now().Unix()
+	sequenceToken := "arbitraryToken"
+	output := &cloudwatchlogs.DescribeLogStreamsOutput{
+		LogStreams: []*cloudwatchlogs.LogStream{
+			{
+				Arn:                 &arn,
+				CreationTime:        &creationTime,
+				FirstEventTimestamp: &creationTime,
+				LastEventTimestamp:  &creationTime,
+				LastIngestionTime:   &creationTime,
+				LogStreamName:       &c.logStreamName,
+				UploadSequenceToken: &sequenceToken,
+			}},
+		NextToken: &sequenceToken,
+	}
+	return output, nil
+}
+func (c *mockCloudWatchLogs) CreateLogStream(*cloudwatchlogs.CreateLogStreamInput) (*cloudwatchlogs.CreateLogStreamOutput, error) {
+	return nil, nil
+}
+func (c *mockCloudWatchLogs) PutLogEvents(input *cloudwatchlogs.PutLogEventsInput) (*cloudwatchlogs.PutLogEventsOutput, error) {
+	sequenceToken := "arbitraryToken"
+	output := &cloudwatchlogs.PutLogEventsOutput{NextSequenceToken: &sequenceToken}
+	//Saving messages
+	for _, event := range input.LogEvents {
+		c.pushedLogEvents = append(c.pushedLogEvents, *event)
+	}
+
+	return output, nil
+}
+
+// Ensure mockCloudWatchLogs implement cloudWatchLogs interface
+var _ cloudWatchLogs = (*mockCloudWatchLogs)(nil)
 
 // Test that each tag becomes one dimension
 func TestBuildDimensions(t *testing.T) {
@@ -37,7 +88,7 @@ func TestBuildDimensions(t *testing.T) {
 
 	tagKeys := make([]string, len(testPoint.Tags()))
 	i := 0
-	for k, _ := range testPoint.Tags() {
+	for k := range testPoint.Tags() {
 		tagKeys[i] = k
 		i += 1
 	}
@@ -339,7 +390,6 @@ func newCloudWatchClient(svc cloudwatchiface.CloudWatchAPI, forceFlushInterval t
 	return cloudwatch
 }
 
-//
 func makeMetrics(count int) []telegraf.Metric {
 	metrics := make([]telegraf.Metric, 0, count)
 	measurement := "Test_namespace"
